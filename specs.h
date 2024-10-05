@@ -1,0 +1,8 @@
+#pragma once
+#include <cstddef>
+
+constexpr size_t POT8TO_MAX_MEMORY = 4096;
+constexpr size_t POT8TO_PROGRAM_MEMORY_INITIAL_POSITION = 0x200;
+constexpr size_t POT8TO_PROGRAM_MEMORY = POT8TO_MAX_MEMORY - POT8TO_PROGRAM_MEMORY_INITIAL_POSITION;
+constexpr size_t POT8TO_DISPLAY_WIDTH = 64;
+constexpr size_t POT8TO_DISPLAY_HEIGHT = 32;
