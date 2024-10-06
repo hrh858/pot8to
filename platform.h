@@ -4,17 +4,20 @@
 #include <cstdint>
 
 namespace Platform {
-// The emulator provides to the OS.
-// give timing, input get bitman, sound buffer
-void render_and_play_sound(
-    const uint8_t screen[POT8TO_DISPLAY_HEIGHT][POT8TO_DISPLAY_WIDTH],
-    bool sound);
+struct Context;
 
 struct Program {
-  uint8_t buffer[POT8TO_PROGRAM_MEMORY];
-  size_t size;
+    uint8_t buffer[POT8TO_PROGRAM_MEMORY];
+    size_t size;
 };
 Program pick_and_load_program();
+
+void render_display(
+    Context &ctx,
+    const uint8_t display[POT8TO_DISPLAY_HEIGHT][POT8TO_DISPLAY_WIDTH]
+);
+
+void make_sound();
 
 uint8_t rnd_8bits();
 
