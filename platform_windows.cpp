@@ -1,7 +1,6 @@
 #pragma once
 #include "platform.h"
-// #include <commdlg.h>
-#include <Windows.h>
+#include <windows.h>
 
 namespace Platform {
  struct Context {
@@ -62,7 +61,7 @@ void render_display(
     const uint8_t display[POT8TO_DISPLAY_HEIGHT][POT8TO_DISPLAY_WIDTH]) {
   // Get device context of the window
   PAINTSTRUCT ps;
-  HDC hdc = BeginPaint(hwnd, &ps);
+  HDC hdc = BeginPaint(ctx.hwnd, &ps);
 
   // Define the size of each CHIP-8 pixel to be drawn
   const int pixelSize = 15; // Adjusted size to match window setup
@@ -90,7 +89,7 @@ void render_display(
   }
 
   // Release the device context
-  EndPaint(hwnd, &ps);
+  EndPaint(ctx.hwnd, &ps);
 }
 
 uint8_t rnd_8bits() {

@@ -1,6 +1,7 @@
-#include "platform.h"
+// #include "platform.h"
+#include "platform_windows.cpp"
 #include "pot8to.cpp"
-#include <Windows.h>
+#include <windows.h>
 #include <commdlg.h>
 #include <stdio.h>
 
@@ -18,7 +19,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam,
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow) {
-  Platform::Context ctx = {};
   Platform::Program rom = Platform::pick_and_load_program();
   if (rom.size < 0) {
     // TODO: Finish execution
@@ -56,6 +56,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   if (hwnd == NULL) {
     return 0; // Handle window creation failure
   }
+  Platform::Context ctx = { hwnd };
 
   // Show the window
   ShowWindow(hwnd, nCmdShow);
@@ -69,7 +70,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   QueryPerformanceCounter(&previousTime);
   double accumulatedTime = 0.0;
 
+  MSG msg = {0};
   while (true) {
+    while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+      if (msg.message == WM_QUIT)
+          return 0;
+      TranslateMessage(&msg);
+      DispatchMessage(&msg);
+    }
+
     LARGE_INTEGER currentTime;
     QueryPerformanceCounter(&currentTime);
 
