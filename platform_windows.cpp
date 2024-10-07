@@ -3,9 +3,9 @@
 #include <windows.h>
 
 namespace Platform {
- struct Context {
-    HWND &hwnd;
- };
+struct Context {
+  HWND &hwnd;
+};
 
 Program pick_and_load_program() {
   Program program = {};
@@ -60,8 +60,7 @@ void render_display(
     Context &ctx,
     const uint8_t display[POT8TO_DISPLAY_HEIGHT][POT8TO_DISPLAY_WIDTH]) {
   // Get device context of the window
-  PAINTSTRUCT ps;
-  HDC hdc = BeginPaint(ctx.hwnd, &ps);
+  HDC hdc = GetDC(ctx.hwnd);
 
   // Define the size of each CHIP-8 pixel to be drawn
   const int pixelSize = 15; // Adjusted size to match window setup
@@ -70,26 +69,23 @@ void render_display(
   for (int y = 0; y < POT8TO_DISPLAY_HEIGHT; y++) {
     for (int x = 0; x < POT8TO_DISPLAY_WIDTH; x++) {
       // Determine color based on display value
+      HBRUSH brush;
+      RECT rect = {x * pixelSize, y * pixelSize, (x + 1) * pixelSize,
+                   (y + 1) * pixelSize};
       if (display[y][x] == 1) {
         // Set brush to white to draw a filled rectangle
-        HBRUSH brush = CreateSolidBrush(RGB(255, 255, 255));
-        RECT rect = {x * pixelSize, y * pixelSize, (x + 1) * pixelSize,
-                     (y + 1) * pixelSize};
-        FillRect(hdc, &rect, brush);
-        DeleteObject(brush);
+        brush = CreateSolidBrush(RGB(255, 255, 255));
       } else {
         // Clear the pixel if it should be empty
-        HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
-        RECT rect = {x * pixelSize, y * pixelSize, (x + 1) * pixelSize,
-                     (y + 1) * pixelSize};
-        FillRect(hdc, &rect, brush);
-        DeleteObject(brush);
+        brush = CreateSolidBrush(RGB(0, 0, 0));
       }
+      FillRect(hdc, &rect, brush);
+      DeleteObject(brush);
     }
   }
 
   // Release the device context
-  EndPaint(ctx.hwnd, &ps);
+  ReleaseDC(ctx.hwnd, hdc);
 }
 
 uint8_t rnd_8bits() {

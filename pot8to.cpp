@@ -515,4 +515,12 @@ void tick(State &state) {
   execute_decoded_instruction(state, inst);
 }
 
+void decrement_timers(State &state) {
+  state.registers.T.delay =
+      state.registers.T.delay > 0 ? state.registers.T.delay - 1 : 0;
+
+  state.registers.T.sound =
+      state.registers.T.sound > 0 ? state.registers.T.sound - 1 : 0;
+}
+
 } // namespace Pot8to
