@@ -111,7 +111,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
       accumulatedTimeFrame -= targetFrameTime;
       previousTimeFrame = currentTime;
     }
-  }
+   }
 
   return 0;
 }

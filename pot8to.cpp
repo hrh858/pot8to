@@ -330,8 +330,9 @@ static void execute_decoded_instruction(State &state,
   case INST_8XY7: {
     int16_t sub = (int16_t)state.registers.V[instruction.registers.vy] -
                   (int16_t)state.registers.V[instruction.registers.vx];
-    state.registers.V[0xF] = sub >= 0;
+    uint8_t carry_flag = sub >= 0;
     state.registers.V[instruction.registers.vx] = (uint8_t)(sub & 0xFF);
+    state.registers.V[0xF] = carry_flag;
   } break;
 
   case INST_BNNN:
@@ -381,8 +382,9 @@ static void execute_decoded_instruction(State &state,
   case INST_8XY5: {
     int16_t sub = (int16_t)state.registers.V[instruction.registers.vx] -
                   (int16_t)state.registers.V[instruction.registers.vy];
-    state.registers.V[0xF] = sub >= 0;
+    uint8_t carry_flag = sub >= 0;
     state.registers.V[instruction.registers.vx] = (uint8_t)(sub & 0xFF);
+    state.registers.V[0xF] = carry_flag;
   } break;
 
   case INST_4XNN:
@@ -395,11 +397,12 @@ static void execute_decoded_instruction(State &state,
         state.registers.V[instruction.registers.vy];
     break;
 
-  case INST_8XY6:
+  case INST_8XY6: {
     // NOTE: Some implementations seem to shift VY too??
-    state.registers.V[0xF] = state.registers.V[instruction.registers.vx] & 0x01;
+    uint8_t carry_flag = state.registers.V[instruction.registers.vx] & 0x01;
     state.registers.V[instruction.registers.vx] >>= 1;
-    break;
+    state.registers.V[0xF] = carry_flag;
+  } break;
 
   case INST_5XY0:
     state.registers.PC += 2 * (state.registers.V[instruction.registers.vx] ==
@@ -411,11 +414,13 @@ static void execute_decoded_instruction(State &state,
         state.registers.V[instruction.registers.vy];
     break;
 
-  case INST_8XYE:
+  case INST_8XYE: {
     // NOTE: Some implementations seem to shift VY too??
-    state.registers.V[0xF] = state.registers.V[instruction.registers.vx] & 0x80;
+    uint8_t carry_flag =
+        (state.registers.V[instruction.registers.vx] & 0x80) >> 7;
     state.registers.V[instruction.registers.vx] <<= 1;
-    break;
+    state.registers.V[0xF] = carry_flag;
+  } break;
 
   case INST_7XNN:
     state.registers.V[instruction.registers.vx] += instruction.address.NN;
@@ -457,8 +462,9 @@ static void execute_decoded_instruction(State &state,
   case INST_8XY4: {
     uint16_t sum = (uint16_t)state.registers.V[instruction.registers.vx] +
                    (uint16_t)state.registers.V[instruction.registers.vy];
-    state.registers.V[0xF] = sum > 255;
+    uint8_t carry_flag = sum > 255;
     state.registers.V[instruction.registers.vx] = (uint8_t)(sum & 0xFF);
+    state.registers.V[0xF] = carry_flag;
   } break;
 
   case INST_1NNN:
@@ -499,7 +505,7 @@ static void execute_decoded_instruction(State &state,
     break;
 
   case INST_FX65:
-    for (size_t i = 0; i < instruction.registers.vx; i++) {
+    for (size_t i = 0; i <= instruction.registers.vx; i++) {
       state.registers.V[i] = state.memory[state.registers.I + i];
     }
     break;
