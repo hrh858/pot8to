@@ -88,13 +88,18 @@ void render_display(
   ReleaseDC(ctx.hwnd, hdc);
 }
 
+void beep() { Beep(1000, 100); }
+
 uint8_t rnd_8bits() {
   LARGE_INTEGER counter;
   QueryPerformanceCounter(&counter);
   return (uint8_t)(counter.QuadPart & 0xFF);
 }
 
-void except_unknown_inst() {}
-
 void block_for_input() {}
+
+void except_unknown_inst() {
+  // TODO: Implement - This is called by the emulator when it finds an
+  // unknown instruction (which should not happen in a sane program).
+}
 } // namespace Platform

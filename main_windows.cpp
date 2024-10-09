@@ -106,12 +106,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
       previousTimeInstruction = currentTime;
     }
     if (accumulatedTimeFrame >= targetFrameTime) {
+      if (emu.registers.T.sound > 0) {
+        Platform::beep();
+      }
       Pot8to::decrement_timers(emu);
       Platform::render_display(ctx, emu.display);
       accumulatedTimeFrame -= targetFrameTime;
       previousTimeFrame = currentTime;
     }
-   }
+  }
 
   return 0;
 }
